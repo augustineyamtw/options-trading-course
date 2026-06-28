@@ -606,7 +606,18 @@ function render(){
     const pct     = Math.round((correct/total)*100);
     const emoji   = pct>=85?"🏆":pct>=60?"🎉":"📚";
     const msg     = pct>=85?"Outstanding — you've mastered this chapter!":pct>=60?"Good work! Review any tricky spots.":"Keep at it — re-read the lessons and try again.";
-    const rows    = quiz.map((q,i)=>`<div class="result-row"><span style="flex:1;margin-right:8px;">${q.q.slice(0,52)}…</span><span>${scores[i]?"✅":"❌"}</span></div>`).join("");
+    const lessons = phase===1 ? L1 : L2;
+    const rows    = quiz.map((q,i)=>`
+      <div class="result-row" style="cursor:pointer;" onclick="goToLesson(${i})" title="Review lesson ${i+1}">
+        <span style="display:flex;align-items:center;gap:6px;flex:1;margin-right:8px;">
+          <span style="font-size:16px;">${lessons[i]?lessons[i].icon:""}</span>
+          <span>${q.q.slice(0,50)}…</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:6px;">
+          <span>${scores[i]?"✅":"❌"}</span>
+          <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${scores[i]?"":"← recap"}</span>
+        </span>
+      </div>`).join("");
     const advBtn  = phase===1
       ? `<button class="btn-nav btn-primary" style="flex:1;" onclick="goAdv()">Continue to advanced lessons →</button>`
       : `<button class="btn-nav btn-primary" style="flex:1;" onclick="goCh2Quiz()">Retry advanced quiz</button>`;
@@ -616,9 +627,14 @@ function render(){
         <div class="score-circle"><span class="score-num">${correct}/${total}</span><span class="score-denom">${pct}%</span></div>
         <p style="font-size:14px;color:var(--text-secondary);margin:0 0 1.5rem;">${msg}</p>
       </div>
-      <div class="card"><p class="section-title" style="margin-bottom:8px;">Your answers</p>${rows}</div>
+      <div class="card">
+        <p class="section-title" style="margin-bottom:2px;">Your answers</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Tap any row to go back and review that lesson</p>
+        ${rows}
+      </div>
       <div style="display:flex;gap:8px;margin-top:1rem;">
-        <button class="btn-nav" style="flex:1;" onclick="retryQ()">Retry this quiz</button>
+        <button class="btn-nav" style="flex:1;" onclick="retryQ()">Retry quiz</button>
+        <button class="btn-nav" style="flex:1;" onclick="goToLesson(0)">← All lessons</button>
         ${advBtn}
       </div>`;
   }
@@ -695,6 +711,7 @@ function retryQ(){
 function goAdv()      { mode="chapter-intro"; render(); }
 function startChapter2(){ phase=2; mode="lesson"; lIdx=0; sel=null; answered=false; render(); }
 function goCh2Quiz()  { scores2=[]; qIdx=0; sel=null; answered=false; mode="quiz"; render(); }
+function goToLesson(i){ mode="lesson"; lIdx=Math.min(i, (phase===1?L1:L2).length-1); render(); }
 
 render();
 </script>
