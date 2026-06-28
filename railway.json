@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "npx serve . -p ${PORT:-3000}",
+    "startCommand": "python3 -m http.server ${PORT:-3000}",
     "restartPolicyType": "ON_FAILURE"
   }
 }
