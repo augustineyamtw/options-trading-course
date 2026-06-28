@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Options Trading Course</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --surface-0: #f1efe8;
+      --surface-1: #f5f4f0;
+      --surface-2: #ffffff;
+      --text-primary: #1a1a18;
+      --text-secondary: #5f5e5a;
+      --text-muted: #888780;
+      --border: rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.18);
+      --bg-accent: #E6F1FB;
+      --text-accent: #0C447C;
+      --border-accent: #378ADD;
+      --radius: 8px;
+      --font-sans: system-ui, -apple-system, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --surface-0: #1a1a18;
+        --surface-1: #222220;
+        --surface-2: #2c2c2a;
+        --text-primary: #f0efe9;
+        --text-secondary: #b4b2a9;
+        --text-muted: #888780;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.18);
+        --bg-accent: #0C447C;
+        --text-accent: #85B7EB;
+      }
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--surface-0);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .site-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .site-header h1 {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .site-header p {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .progress-bar { height: 6px; background: var(--surface-1); border-radius: 3px; margin-bottom: 1.5rem; border: 0.5px solid var(--border); }
+    .progress-fill { height: 100%; border-radius: 3px; background: #378ADD; transition: width 0.4s; }
+    .section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); margin: 0 0 8px; }
+    .card { background: var(--surface-2); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+    .card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .icon-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .card h3 { font-size: 15px; font-weight: 500; margin: 0 0 4px; }
+    .card p { font-size: 14px; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+    .example-box { background: var(--surface-1); border-left: 3px solid #378ADD; border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+    .warning-box { background: #FAEEDA; border-left: 3px solid #BA7517; border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: #412402; line-height: 1.6; }
+    .danger-box { background: #FCEBEB; border-left: 3px solid #A32D2D; border-radius: 0 8px 8px 0; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: #501313; line-height: 1.6; }
+    .tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 20px; margin-right: 4px; margin-bottom: 4px; }
+    .tag-call { background: #E1F5EE; color: #085041; }
+    .tag-put { background: #FCEBEB; color: #791F1F; }
+    .tag-sell { background: #FAEEDA; color: #412402; }
+    .tag-danger { background: #FCEBEB; color: #791F1F; }
+    .quiz-q { font-size: 15px; font-weight: 500; margin-bottom: 1rem; line-height: 1.5; }
+    .quiz-opt { width: 100%; text-align: left; background: var(--surface-2); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 8px; font-size: 14px; cursor: pointer; color: var(--text-primary); display: block; transition: background 0.15s; font-family: var(--font-sans); }
+    .quiz-opt:hover:not(:disabled) { background: var(--surface-1); }
+    .quiz-opt.reveal-correct { background: #EAF3DE; border-color: #3B6D11; color: #173404; }
+    .quiz-opt.wrong { background: #FCEBEB; border-color: #A32D2D; color: #501313; }
+    .feedback { font-size: 13px; padding: 10px 14px; border-radius: var(--radius); margin-top: 6px; line-height: 1.5; }
+    .feedback.ok { background: #EAF3DE; color: #27500A; }
+    .feedback.wrong { background: #FCEBEB; color: #791F1F; }
+    .btn-nav { font-size: 14px; padding: 8px 20px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); cursor: pointer; background: transparent; color: var(--text-primary); font-family: var(--font-sans); }
+    .btn-nav:hover { background: var(--surface-1); }
+    .btn-primary { background: #378ADD; border-color: #378ADD; color: #fff; }
+    .btn-primary:hover { background: #185FA5; border-color: #185FA5; color: #fff; }
+    .score-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #378ADD; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+    .score-num { font-size: 22px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+    .score-denom { font-size: 12px; color: var(--text-muted); }
+    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; }
+    .step-label { font-size: 12px; color: var(--text-muted); }
+    .result-row { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid var(--border); color: var(--text-secondary); }
+    .result-row:last-child { border-bottom: none; }
+    .chapter-banner { background: var(--surface-1); border: 0.5px solid var(--border); border-radius: 12px; padding: 1.5rem; text-align: center; margin-bottom: 1rem; }
+    .chapter-banner h2 { font-size: 18px; font-weight: 500; margin: 0 0 6px; }
+    .chapter-banner p { font-size: 13px; color: var(--text-secondary); margin: 0; }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .compare-cell { border-radius: 8px; padding: 10px; font-size: 13px; line-height: 1.5; }
+    .compare-cell strong { display: block; margin-bottom: 4px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="site-header">
+      <h1>Options Trading Course</h1>
+      <p>Beginner to advanced — even a 10-year-old can follow along</p>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <div id="app"></div>
+  </div>
+
+<script>
+const L1 = [
+  {
+    title:"What is an option?",icon:"🎟️",iconBg:"#E6F1FB",
+    body:"An option is a special ticket giving you the RIGHT — but not the obligation — to buy or sell something at a set price before a deadline.",
+    example:"Imagine a toy costs $20 but you only have $5. The store lets you pay $1 to hold it at $20 for two weeks. That's an option! You decide later whether to buy."
+  },
+  {
+    title:"Call options — the right to BUY",icon:"📈",iconBg:"#E1F5EE",tags:[{label:"CALL",cls:"tag-call"}],
+    body:"A CALL option lets you buy shares at a locked-in price (the strike price). You buy a call when you think the price will go UP.",
+    example:"Apple is $150 today. You buy a call at $150 strike. If Apple jumps to $180, you can still buy at $150 and pocket a $30/share profit. If it drops, you only lose the premium you paid."
+  },
+  {
+    title:"Put options — the right to SELL",icon:"📉",iconBg:"#FCEBEB",tags:[{label:"PUT",cls:"tag-put"}],
+    body:"A PUT option lets you sell shares at a locked-in price. You buy a put when you think the price will go DOWN — it's like insurance for your stocks!",
+    example:"You own Apple at $150 and fear a crash. You buy a put at $150. If Apple falls to $100, you can still sell at $150 — saving $50/share!"
+  },
+  {
+    title:"Key words to know",icon:"📖",iconBg:"#FAEEDA",
+    body:"Four magic words every options trader needs:",
+    bullets:[
+      {icon:"🎯",term:"Strike price",def:"The locked-in buy/sell price"},
+      {icon:"⏰",term:"Expiry date",def:"The deadline — after this the option is gone"},
+      {icon:"💵",term:"Premium",def:"The price you pay for the option ticket"},
+      {icon:"📊",term:"Underlying",def:"The stock the option is based on (e.g. Apple, Tesla)"},
+    ]
+  },
+  {
+    title:"In the money vs. out of the money",icon:"💡",iconBg:"#E1F5EE",
+    body:"These phrases tell you if your option is currently profitable or not.",
+    bullets:[
+      {icon:"✅",term:"In the money (ITM)",def:"Has real value right now. Call: stock > strike. Put: stock < strike."},
+      {icon:"❌",term:"Out of the money (OTM)",def:"No value right now — you'd lose money exercising it."},
+      {icon:"➡️",term:"At the money (ATM)",def:"Stock price equals the strike price exactly."},
+    ]
+  },
+  {
+    title:"The most you can lose (as a buyer)",icon:"🛡️",iconBg:"#FAEEDA",
+    body:"When you BUY an option, your maximum loss is only the premium you paid — never more! That's a key safety feature of buying options.",
+    example:"You pay $200 for an option. The stock crashes to zero. You lose exactly $200 — that's it! But if you owned 100 shares at $150, a crash could cost you $15,000."
+  }
+];
+
+const L2 = [
+  {
+    title:"Selling options — flipping sides",icon:"🔄",iconBg:"#E6F1FB",
+    body:"So far you've been the BUYER of options. But someone has to sell them! When you SELL an option, you collect the premium upfront — but you take on an obligation instead of a right.",
+    bullets:[
+      {icon:"💰",term:"Buyer",def:"Pays the premium. Has the RIGHT. Limited loss."},
+      {icon:"🏦",term:"Seller (writer)",def:"Collects the premium. Has the OBLIGATION. Potentially unlimited loss."},
+    ],
+    example:"Think of it like an insurance company. You pay them a premium. If disaster strikes, THEY must pay you. The seller is the insurance company — they collect money upfront but must pay if things go wrong."
+  },
+  {
+    title:"Selling a CALL — 'covered call'",icon:"📤",iconBg:"#E1F5EE",tags:[{label:"SELL CALL",cls:"tag-sell"}],
+    body:"When you SELL a call, you promise to sell 100 shares at the strike price if the buyer exercises. You collect the premium immediately.",
+    bullets:[
+      {icon:"🟢",term:"You profit when",def:"The stock stays BELOW the strike price. The buyer won't exercise, and you keep the premium."},
+      {icon:"🔴",term:"You lose when",def:"The stock rises ABOVE strike. You must sell your shares at the lower strike price, missing out on gains."},
+    ],
+    example:"You own Apple at $150. You sell a call at $160 strike for $5 premium. Apple stays at $155 → you keep your $5 premium. Apple rockets to $200 → you must sell at $160, losing the $40 upside. The $5 softens the blow."
+  },
+  {
+    title:"Selling a PUT — 'cash-secured put'",icon:"📥",iconBg:"#FAEEDA",tags:[{label:"SELL PUT",cls:"tag-sell"}],
+    body:"When you SELL a put, you promise to BUY 100 shares at the strike price if the buyer exercises. You collect the premium upfront.",
+    bullets:[
+      {icon:"🟢",term:"You profit when",def:"The stock stays ABOVE the strike price. The put expires worthless, you keep the premium."},
+      {icon:"🔴",term:"You lose when",def:"The stock falls BELOW strike. You must buy shares at the higher strike price, even though they're now worth less."},
+    ],
+    example:"Tesla is at $200. You sell a put at $190 for a $4 premium. Tesla stays above $190 → you pocket $4 per share. Tesla crashes to $150 → you're forced to buy at $190 when it's worth $150. Loss = $40/share minus the $4 premium."
+  },
+  {
+    title:"Naked calls — the most dangerous trade",icon:"⚠️",iconBg:"#FCEBEB",tags:[{label:"NAKED CALL",cls:"tag-danger"}],
+    body:"A NAKED call means you sell a call option WITHOUT owning the underlying shares. If the stock rockets upward, your losses are theoretically UNLIMITED.",
+    bullets:[
+      {icon:"🔥",term:"Why it's dangerous",def:"If you sold a call at $150 and the stock hits $500, you must buy shares at $500 and sell them at $150 — a $350/share loss with no ceiling!"},
+      {icon:"🚫",term:"Who can do this",def:"Most brokers require a very high account level (Level 4-5) and large cash reserves before allowing naked calls."},
+    ],
+    danger:"A naked call seller in 2021 sold calls on GameStop stock at $20. GameStop squeezed to $400. That's a $380/share loss × 100 shares = $38,000 loss per contract. This is why naked calls are considered extremely risky — losses have NO limit."
+  },
+  {
+    title:"Naked puts — large but capped risk",icon:"⚡",iconBg:"#FAEEDA",tags:[{label:"NAKED PUT",cls:"tag-danger"}],
+    body:"A NAKED put means you sell a put WITHOUT having the cash set aside to buy the shares. The risk is large but technically LIMITED — a stock can only fall to zero.",
+    bullets:[
+      {icon:"⚠️",term:"Maximum loss",def:"Strike price × 100 shares minus premium received. Example: $150 strike × 100 = $15,000 max loss if stock goes to zero."},
+      {icon:"📊",term:"vs. Cash-secured put",def:"A cash-secured put means you actually have the $15,000 ready. Naked means you don't — you're borrowing on margin."},
+    ],
+    warning:"Naked puts are less dangerous than naked calls (because stocks can't go below zero), but still very risky. A company like Enron or SVB going to zero could wipe out your entire account."
+  },
+  {
+    title:"Buyer vs. seller — quick comparison",icon:"⚖️",iconBg:"#E6F1FB",
+    body:"Here's the full picture of all four positions:",
+    compare:[
+      {label:"Buy Call",bg:"#E1F5EE",col:"#085041",profit:"Stock goes UP",loss:"Only premium paid",risk:"Low"},
+      {label:"Buy Put",bg:"#FCEBEB",col:"#791F1F",profit:"Stock goes DOWN",loss:"Only premium paid",risk:"Low"},
+      {label:"Sell Call",bg:"#FAEEDA",col:"#412402",profit:"Stock stays flat/down",loss:"Unlimited (if naked)",risk:"Very High (naked)"},
+      {label:"Sell Put",bg:"#F4C0D1",col:"#4B1528",profit:"Stock stays flat/up",loss:"Strike × 100 (if naked)",risk:"High (naked)"},
+    ]
+  }
+];
+
+const Q1 = [
+  {q:"What does an option give you the RIGHT to do?",opts:["Buy or sell at a set price before a deadline","Own a company forever","Get free stocks","Borrow from a bank"],ans:0,explain:"An option is a ticket that gives you the right (but not the obligation) to buy or sell at a set price before it expires."},
+  {q:"You think Tesla stock will RISE next month. Which option should you buy?",opts:["A PUT option","A CALL option","Neither","A bond"],ans:1,explain:"A CALL option profits when the stock price goes UP. You lock in a lower price today."},
+  {q:"Your Apple CALL option has a strike of $150. Apple trades at $170. Your option is…",opts:["Out of the money","At the money","In the money","Expired"],ans:2,explain:"In the money! For a CALL, 'in the money' means stock price ($170) is ABOVE the strike ($150)."},
+  {q:"You buy an option for $300. The stock crashes to zero. What's your MAX loss?",opts:["Everything you own","$300","The stock's value","Unlimited"],ans:1,explain:"When you BUY an option, your max loss is the premium paid — $300. That's it!"},
+  {q:"What is the 'premium' in options?",opts:["The highest stock price ever","The price you pay for the option itself","The profit you make","The stock's market value"],ans:1,explain:"The premium is the cost of the option ticket — what you pay for the right to buy or sell later."},
+  {q:"You think Amazon stock will FALL. Which option helps you profit?",opts:["Call option","Put option","Stock option","Bond option"],ans:1,explain:"A PUT option lets you sell at the strike. If the stock falls below that, your put gains value."},
+  {q:"An option expires December 31st. What happens January 1st?",opts:["It doubles in value","It can still be used","It expires worthless","It auto-exercises"],ans:2,explain:"After expiry, the option is gone — like an expired coupon. Use it or lose it!"}
+];
+
+const Q2 = [
+  {q:"When you SELL an option, what do you receive immediately?",opts:["The right to buy shares","The obligation to buy shares","The premium","A dividend"],ans:2,explain:"The seller collects the premium upfront. In exchange, they take on an obligation — they must buy or sell if the buyer exercises."},
+  {q:"You SELL a call option on Apple at a $160 strike. Apple rockets to $220. What happens?",opts:["You profit by $60/share","You must sell shares at $160, missing the $60 upside","Nothing — calls only matter to buyers","You get to buy shares at $160"],ans:1,explain:"As the call seller, you're OBLIGATED to sell at $160 even though Apple is worth $220. You miss out on $60/share in gains (partially offset by the premium you collected)."},
+  {q:"What makes a NAKED call so dangerous compared to a covered call?",opts:["You don't own the underlying shares, so losses are unlimited","It expires faster","The premium is lower","You must pay twice the strike price"],ans:0,explain:"A covered call seller owns the shares — their upside is capped but they're protected. A naked call seller has NO shares, so if the stock keeps rising, losses are theoretically unlimited."},
+  {q:"You sell a NAKED PUT on a stock at a $100 strike. The company goes bankrupt (stock = $0). What's your approximate max loss?",opts:["Unlimited","$100 per share × 100 = $10,000","$0 — puts can't lose money","Only the premium you collected"],ans:1,explain:"A stock can only fall to zero, so a naked put's max loss is: (strike price × 100 shares) minus the premium. Unlike naked calls, the loss IS capped — but it can still be massive!"},
+  {q:"A 'cash-secured put' means…",opts:["You borrowed money to sell the put","You have the full cash ready to buy the shares if assigned","You only paid half the premium","The broker holds your shares as security"],ans:1,explain:"Cash-secured means you have the actual money (e.g. $10,000 for a $100 strike × 100 shares) sitting in your account. It's the safer version of selling a put."},
+  {q:"Which strategy has theoretically UNLIMITED risk?",opts:["Buying a call","Buying a put","Selling a naked call","Selling a cash-secured put"],ans:2,explain:"Selling a naked call has unlimited risk because the stock can theoretically rise to infinity. This is why brokers restrict this strategy to experienced traders with large accounts."},
+  {q:"You sell a covered call on Tesla (you own 100 shares at $200) at a $220 strike for $8 premium. Tesla stays at $210 at expiry. What happens?",opts:["You lose $8","You keep the $8 premium and your shares","You must sell shares at $210","You must buy more shares at $220"],ans:1,explain:"Tesla stayed BELOW the $220 strike, so the call expires worthless. You keep your $8 premium AND your 100 shares. This is the ideal outcome for a covered call seller!"}
+];
+
+let phase=1, mode="lesson", lIdx=0, qIdx=0, sel=null, answered=false, scores1=[], scores2=[];
+
+function setProgress(p){document.getElementById("prog").style.width=p+"%";}
+
+function render(){
+  const app=document.getElementById("app");
+  const lessons=phase===1?L1:L2;
+  const quiz=phase===1?Q1:Q2;
+  const scores=phase===1?scores1:scores2;
+  const totalSteps=(L1.length+Q1.length+L2.length+Q2.length);
+
+  if(mode==="chapter-intro"){
+    setProgress(((L1.length+Q1.length)/totalSteps)*100);
+    app.innerHTML=`
+      <div class="chapter-banner">
+        <div style="font-size:36px;margin-bottom:8px;">🎓</div>
+        <h2>Chapter 2: Advanced Options</h2>
+        <p style="margin-bottom:0.75rem;">You've mastered buying options. Now let's learn what happens when you're on the other side — selling options, covered calls, naked calls, and more.</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:1rem;">6 advanced lessons + 7 quiz questions</p>
+        <button class="btn-nav btn-primary" onclick="startChapter2()">Start advanced lessons</button>
+      </div>`;
+    return;
+  }
+
+  if(mode==="lesson"){
+    const l=lessons[lIdx];
+    const baseSteps=phase===1?0:(L1.length+Q1.length);
+    setProgress(((baseSteps+lIdx)/totalSteps)*100);
+    let inner="";
+    if(l.bullets){
+      inner=l.bullets.map(b=>`<div style="display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;"><span style="font-size:15px;margin-top:1px;">${b.icon}</span><div><span style="font-size:13px;font-weight:500;color:var(--text-primary);">${b.term}</span><span style="font-size:13px;color:var(--text-secondary);"> — ${b.def}</span></div></div>`).join("");
+      inner=`<div style="margin-top:10px;">${inner}</div>`;
+    }
+    if(l.compare){
+      inner=`<div class="compare-grid">${l.compare.map(c=>`<div class="compare-cell" style="background:${c.bg};"><strong style="color:${c.col};font-size:12px;">${c.label}</strong><div style="font-size:12px;color:${c.col};margin-bottom:3px;">Profit: ${c.profit}</div><div style="font-size:12px;color:${c.col};margin-bottom:3px;">Max loss: ${c.loss}</div><div style="font-size:11px;font-weight:500;color:${c.col};">Risk: ${c.risk}</div></div>`).join("")}</div>`;
+    }
+    const exHtml=l.example?`<div class="example-box"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;color:#185FA5;">Example</strong><br>${l.example}</div>`:"";
+    const warnHtml=l.warning?`<div class="warning-box"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Warning</strong><br>${l.warning}</div>`:"";
+    const dangHtml=l.danger?`<div class="danger-box"><strong style="font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">Real-world example</strong><br>${l.danger}</div>`:"";
+    const tagsHtml=(l.tags||[]).map(t=>`<span class="tag ${t.cls}">${t.label}</span>`).join("");
+    const chLabel=phase===1?"Chapter 1":"Chapter 2";
+    app.innerHTML=`
+      <p class="section-title">${chLabel} · Lesson ${lIdx+1} of ${lessons.length}</p>
+      <div class="card">
+        <div class="card-header">
+          <div class="icon-circle" style="background:${l.iconBg}">${l.icon}</div>
+          <div><h3>${l.title}</h3>${tagsHtml?`<div>${tagsHtml}</div>`:""}</div>
+        </div>
+        <p>${l.body}</p>${inner}${exHtml}${warnHtml}${dangHtml}
+      </div>
+      <div class="nav-row">
+        <button class="btn-nav" onclick="prevL()" ${lIdx===0?"style='visibility:hidden'":""}>← Back</button>
+        <span class="step-label">${lIdx+1} / ${lessons.length}</span>
+        <button class="btn-nav btn-primary" onclick="nextL()">${lIdx===lessons.length-1?"Start quiz →":"Next →"}</button>
+      </div>`;
+    return;
+  }
+
+  if(mode==="quiz"){
+    const q=quiz[qIdx];
+    const baseSteps=phase===1?L1.length:(L1.length+Q1.length+L2.length);
+    setProgress(((baseSteps+qIdx)/totalSteps)*100);
+    const correct=scores.filter(Boolean).length;
+    const optsHtml=q.opts.map((o,i)=>{
+      let cls="quiz-opt";
+      if(answered){if(i===q.ans)cls+=" reveal-correct";else if(i===sel)cls+=" wrong";}
+      return `<button class="${cls}" onclick="pick(${i})" ${answered?"disabled":""}>${o}</button>`;
+    }).join("");
+    const feedHtml=answered?`<div class="feedback ${sel===q.ans?"ok":"wrong"}">${sel===q.ans?"✅ Correct! ":"❌ Not quite. "}${q.explain}</div>`:"";
+    const chLabel=phase===1?"Chapter 1":"Chapter 2";
+    app.innerHTML=`
+      <p class="section-title">${chLabel} quiz · Question ${qIdx+1} of ${quiz.length} &nbsp;·&nbsp; ${correct} correct so far</p>
+      <div class="card">
+        <div class="quiz-q">${q.q}</div>
+        ${optsHtml}${feedHtml}
+      </div>
+      <div class="nav-row"><span></span>${answered?`<button class="btn-nav btn-primary" onclick="nextQ()">${qIdx===quiz.length-1?"See results →":"Next question"}</button>`:""}</div>`;
+    return;
+  }
+
+  if(mode==="result"){
+    const correct=scores.filter(Boolean).length;
+    const total=quiz.length;
+    const pct=Math.round((correct/total)*100);
+    const emoji=pct>=85?"🏆":pct>=60?"🎉":"📚";
+    const msg=pct>=85?"Outstanding — you've mastered this chapter!":pct>=60?"Good work! Review any tricky spots above.":"Keep at it — re-read the lessons and try again.";
+    const rows=quiz.map((q,i)=>`<div class="result-row"><span style="flex:1;margin-right:8px;">${q.q.slice(0,52)}…</span><span>${scores[i]?"✅":"❌"}</span></div>`).join("");
+    const advBtn=phase===1
+      ?`<button class="btn-nav btn-primary" style="flex:1;" onclick="goAdv()">Continue to advanced lessons →</button>`
+      :`<button class="btn-nav btn-primary" style="flex:1;" onclick="goCh2Quiz()">Retry advanced quiz</button>`;
+    app.innerHTML=`
+      <div style="text-align:center;padding:1rem 0 0.5rem;">
+        <div style="font-size:32px;margin-bottom:8px;">${emoji}</div>
+        <div class="score-circle"><span class="score-num">${correct}/${total}</span><span class="score-denom">${pct}%</span></div>
+        <p style="font-size:14px;color:var(--text-secondary);margin:0 0 1.5rem;">${msg}</p>
+      </div>
+      <div class="card"><p class="section-title" style="margin-bottom:8px;">Your answers</p>${rows}</div>
+      <div style="display:flex;gap:8px;margin-top:1rem;">
+        <button class="btn-nav" style="flex:1;" onclick="retryQ()">Retry this quiz</button>
+        ${advBtn}
+      </div>`;
+  }
+}
+
+function prevL(){if(lIdx>0){lIdx--;render();}}
+function nextL(){
+  const lessons=phase===1?L1:L2;
+  if(lIdx<lessons.length-1){lIdx++;render();}
+  else{mode="quiz";qIdx=0;sel=null;answered=false;render();}
+}
+function pick(i){
+  if(answered)return;
+  sel=i;answered=true;
+  const quiz=phase===1?Q1:Q2;
+  if(phase===1)scores1[qIdx]=(i===quiz[qIdx].ans);
+  else scores2[qIdx]=(i===quiz[qIdx].ans);
+  render();
+}
+function nextQ(){
+  const quiz=phase===1?Q1:Q2;
+  if(qIdx<quiz.length-1){qIdx++;sel=null;answered=false;render();}
+  else{mode="result";render();}
+}
+function retryQ(){
+  if(phase===1)scores1=[];else scores2=[];
+  qIdx=0;sel=null;answered=false;mode="quiz";render();
+}
+function goAdv(){mode="chapter-intro";render();}
+function startChapter2(){phase=2;mode="lesson";lIdx=0;sel=null;answered=false;render();}
+function goCh2Quiz(){scores2=[];qIdx=0;sel=null;answered=false;mode="quiz";render();}
+
+render();
+</script>
+</body>
+</html>
