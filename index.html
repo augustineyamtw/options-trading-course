@@ -484,27 +484,50 @@ function getVis(phase, idx) {
 }
 
 /* ── Quiz data ── */
-const Q1 = [
-  {q:"What does an option give you the RIGHT to do?",opts:["Buy or sell at a set price before a deadline","Own a company forever","Get free stocks","Borrow from a bank"],ans:0,explain:"An option is a ticket that gives you the right (but not the obligation) to buy or sell at a set price before it expires."},
-  {q:"You think Tesla stock will RISE next month. Which option should you buy?",opts:["A PUT option","A CALL option","Neither","A bond"],ans:1,explain:"A CALL option profits when the stock price goes UP. You lock in a lower price today."},
-  {q:"Your Apple CALL option has a strike of $150. Apple trades at $170. Your option is…",opts:["Out of the money","At the money","In the money","Expired"],ans:2,explain:"In the money! For a CALL, 'in the money' means stock price ($170) is ABOVE the strike ($150)."},
-  {q:"You buy an option for $300. The stock crashes to zero. What's your MAX loss?",opts:["Everything you own","$300","The stock's value","Unlimited"],ans:1,explain:"When you BUY an option, your max loss is the premium paid — $300. That's it!"},
-  {q:"What is the 'premium' in options?",opts:["The highest stock price ever","The price you pay for the option itself","The profit you make","The stock's market value"],ans:1,explain:"The premium is the cost of the option ticket — what you pay for the right to buy or sell later."},
-  {q:"You think Amazon stock will FALL. Which option helps you profit?",opts:["Call option","Put option","Stock option","Bond option"],ans:1,explain:"A PUT option lets you sell at the strike. If the stock falls below that, your put gains value."},
-  {q:"An option expires December 31st. What happens January 1st?",opts:["It doubles in value","It can still be used","It expires worthless","It auto-exercises"],ans:2,explain:"After expiry, the option is gone — like an expired coupon. Use it or lose it!"}
+/* ── Question pools (12 per chapter, 7 drawn each attempt) ── */
+const Q1_POOL = [
+  {q:"What does an option give you the RIGHT to do?",opts:["Buy or sell at a set price before a deadline","Own a company forever","Get free stocks","Borrow from a bank"],ans:0,explain:"An option gives you the right (but not the obligation) to buy or sell at a set price before it expires."},
+  {q:"You think Tesla stock will RISE next month. Which option should you buy?",opts:["A PUT option","A CALL option","Neither — options only go down","A bond"],ans:1,explain:"A CALL option profits when the stock price goes UP. You lock in a lower buy price today."},
+  {q:"Your Apple CALL option has a strike of $150. Apple trades at $170. Your option is…",opts:["Out of the money","At the money","In the money","Expired"],ans:2,explain:"In the money! For a CALL, 'in the money' means the stock price ($170) is ABOVE the strike ($150)."},
+  {q:"You buy an option for $300. The stock crashes to zero. What's your MAX loss?",opts:["Everything you own","$300","The full value of the stock","Unlimited"],ans:1,explain:"When you BUY an option, your max loss is the premium paid — $300. That's it, nothing more!"},
+  {q:"What is the 'premium' in options trading?",opts:["The highest stock price ever recorded","The price you pay to buy the option itself","The profit you make when you sell","The stock's current market value"],ans:1,explain:"The premium is the cost of the option ticket — what you pay for the right to buy or sell later."},
+  {q:"You think Amazon stock will FALL. Which option helps you profit?",opts:["Call option","Put option","Stock option","Bond option"],ans:1,explain:"A PUT option lets you sell at the strike price. If the stock falls below that, your put gains value."},
+  {q:"An option expires December 31st. What happens on January 1st?",opts:["It doubles in value","It can still be used for 30 more days","It expires worthless","It auto-exercises at market price"],ans:2,explain:"After expiry, the option is gone — like an expired coupon. Use it or lose it!"},
+  {q:"What is the 'strike price' of an option?",opts:["The current market price of the stock","The price at which you have the right to buy or sell the stock","The profit you earn when you exercise","The broker's fee for the transaction"],ans:1,explain:"The strike price is the locked-in price at which you can buy (call) or sell (put) the underlying stock."},
+  {q:"You buy a CALL option on Netflix at a $400 strike. Netflix drops to $350 at expiry. What happens?",opts:["Your call becomes more valuable","You are forced to buy at $350","You get a refund of your premium","Your call expires worthless — you lose the premium"],ans:3,explain:"For a call to have value, the stock must be ABOVE the strike. At $350 < $400, the call is out of the money and expires worthless."},
+  {q:"Which of the following is TRUE about buying options?",opts:["You must always exercise before expiry","Buying an option gives you a right, not an obligation","Options always expire on Mondays","Buying options is always riskier than buying stocks"],ans:1,explain:"Correct! A buyer has the RIGHT but not the obligation. You can simply let the option expire if it's not profitable."},
+  {q:"A CALL option is 'out of the money' when…",opts:["The stock price is above the strike price","The stock price equals the strike price","The stock price is below the strike price","The option has more than 30 days until expiry"],ans:2,explain:"For a call, 'out of the money' means the stock is BELOW strike — there's no profit in exercising yet."},
+  {q:"You buy a PUT option on Apple at a $150 strike. Apple falls to $120. Your put is now…",opts:["Out of the money — puts profit when stocks rise","Worthless — puts expire when stocks fall","At the money — it equals the new price","In the money — you can sell at $150 when it's worth $120"],ans:3,explain:"In the money! For a PUT, 'in the money' means stock < strike. You can sell at $150 what's now worth $120 — a $30 gain per share."}
 ];
-const Q2 = [
-  {q:"When you SELL an option, what do you receive immediately?",opts:["The right to buy shares","The obligation to buy shares","The premium","A dividend"],ans:2,explain:"The seller collects the premium upfront. In exchange, they take on an obligation — they must buy or sell if the buyer exercises."},
-  {q:"You SELL a call option on Apple at a $160 strike. Apple rockets to $220. What happens?",opts:["You profit by $60/share","You must sell shares at $160, missing the $60 upside","Nothing — calls only matter to buyers","You get to buy shares at $160"],ans:1,explain:"As the call seller, you're OBLIGATED to sell at $160 even though Apple is worth $220. You miss out on $60/share."},
-  {q:"What makes a NAKED call so dangerous compared to a covered call?",opts:["You don't own the shares, so losses are unlimited","It expires faster","The premium is lower","You pay twice the strike price"],ans:0,explain:"A covered call seller owns the shares. A naked call seller has NO shares — if the stock keeps rising, losses are theoretically unlimited."},
-  {q:"You sell a NAKED PUT at a $100 strike. The company goes bankrupt (stock = $0). What's your max loss?",opts:["Unlimited","$100 × 100 shares = $10,000 minus premium","$0 — puts can't lose","Only the premium collected"],ans:1,explain:"A stock can only fall to zero, so a naked put's max loss is (strike × 100) minus premium. Unlike naked calls, the loss IS capped."},
-  {q:"A 'cash-secured put' means…",opts:["You borrowed money to sell the put","You have the full cash ready to buy the shares if assigned","You only paid half the premium","The broker holds your shares"],ans:1,explain:"Cash-secured means you have the actual cash (e.g. $10,000 for a $100 strike × 100 shares) sitting in your account."},
-  {q:"Which strategy has theoretically UNLIMITED risk?",opts:["Buying a call","Buying a put","Selling a naked call","Selling a cash-secured put"],ans:2,explain:"Selling a naked call has unlimited risk because the stock can theoretically rise to infinity."},
-  {q:"You sell a covered call on Tesla (you own 100 shares at $200) at a $220 strike for $8 premium. Tesla stays at $210 at expiry. What happens?",opts:["You lose $8","You keep the $8 premium and your shares","You must sell shares at $210","You must buy more shares at $220"],ans:1,explain:"Tesla stayed BELOW the $220 strike, so the call expires worthless. You keep your $8 premium AND your 100 shares!"}
+
+const Q2_POOL = [
+  {q:"When you SELL an option, what do you receive immediately?",opts:["The right to buy shares at a discount","An obligation to buy shares","The premium upfront","A guaranteed dividend"],ans:2,explain:"The seller collects the premium upfront. In exchange they accept the obligation to buy or sell if the buyer exercises."},
+  {q:"You SELL a call option on Apple at a $160 strike. Apple rockets to $220. What happens to you as the seller?",opts:["You profit $60/share since you sold high","You must sell shares at $160, missing the $60 upside","Nothing — calls only affect the buyer","You get to buy Apple shares at $160"],ans:1,explain:"As the call seller, you're OBLIGATED to sell at $160 even though Apple is worth $220. You miss $60/share of upside."},
+  {q:"What makes a NAKED call more dangerous than a covered call?",opts:["You don't own the underlying shares, so losses are unlimited","A naked call expires faster","The premium collected is much lower","You must pay twice the strike price upfront"],ans:0,explain:"A covered call seller owns the shares as protection. A naked call seller has NO shares — if the stock keeps rising, losses are theoretically unlimited."},
+  {q:"You sell a NAKED PUT at a $100 strike. The company goes bankrupt (stock = $0). What's your approximate max loss?",opts:["Unlimited — same as a naked call","$100 × 100 shares = $10,000 minus the premium collected","$0 — puts can never lose money","Only the premium you collected"],ans:1,explain:"A stock can only fall to zero, so a naked put's max loss is (strike × 100) minus premium received. Unlike naked calls, this IS capped."},
+  {q:"A 'cash-secured put' means…",opts:["You borrowed money on margin to sell the put","You have the full cash set aside to buy the shares if assigned","You only had to put up half the premium","The broker is holding your shares as collateral"],ans:1,explain:"Cash-secured means you have the actual cash (e.g. $10,000 for a $100 strike × 100 shares) ready in your account — no leverage."},
+  {q:"Which options strategy has theoretically UNLIMITED risk?",opts:["Buying a call option","Buying a put option","Selling a naked call","Selling a cash-secured put"],ans:2,explain:"Selling a naked call has unlimited risk because the stock can theoretically rise to infinity and you'd owe the difference."},
+  {q:"You sell a covered call on Tesla (own 100 shares at $200) at $220 strike for $8 premium. Tesla sits at $210 at expiry. What happens?",opts:["You lose the $8 premium","You keep the $8 premium AND keep your 100 shares","You must sell your shares at $210 market price","You must buy 100 more shares at $220"],ans:1,explain:"Tesla stayed BELOW $220, so the call expires worthless. You pocket the $8 premium and keep your shares — the ideal covered call outcome!"},
+  {q:"What does 'covered' mean in a 'covered call'?",opts:["The option has built-in insurance from the broker","You own the underlying shares that back the obligation","The loss is guaranteed to be covered by profits","The call cannot lose value once sold"],ans:1,explain:"'Covered' means you own the 100 shares you might have to sell. If the buyer exercises, you simply hand over shares you already have."},
+  {q:"As a PUT seller, you want the stock price to…",opts:["Fall sharply below the strike so you can buy cheap","Stay above the strike price so the put expires worthless","Drop to exactly the strike price","Go as low as possible to maximize your premium"],ans:1,explain:"As a put seller you keep the premium if the stock stays ABOVE the strike. The buyer won't exercise a worthless put."},
+  {q:"What is the main benefit of selling a covered call on shares you already own?",opts:["You can sell your shares instantly at any price","You earn premium income that boosts your return on the shares","Your shares become completely risk-free","You receive double dividends on your position"],ans:1,explain:"Selling covered calls generates premium income on top of any dividends or appreciation — a popular strategy for long-term holders."},
+  {q:"You sell a naked call at a $50 strike for $3 premium. The stock surges to $200. Your approximate loss per share is…",opts:["$3 — just the premium you collected","$50 — the strike price","$150 — the difference between $200 and $50, minus the $3 premium","$200 — the full new stock price"],ans:2,explain:"Loss = (current price − strike) − premium = ($200 − $50) − $3 = $147 per share. And it could keep rising!"},
+  {q:"Which statement about selling options is ALWAYS true?",opts:["Your profit potential is unlimited","You collect the premium immediately when you sell","You must own the underlying stock to sell any option","You have the right to buy the stock at the strike price"],ans:1,explain:"Every option seller — covered or naked, call or put — always receives the premium upfront at the moment of sale. Everything else depends on the type."}
 ];
+
+const QUIZ_SIZE = 7;
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function pickQ(pool){ return shuffle(pool).slice(0, QUIZ_SIZE); }
 
 /* ── State ── */
 let phase=1, mode="lesson", lIdx=0, qIdx=0, sel=null, answered=false, scores1=[], scores2=[];
+let activeQ1 = pickQ(Q1_POOL);
+let activeQ2 = pickQ(Q2_POOL);
 
 function setProgress(p){ document.getElementById("prog").style.width=p+"%"; }
 
@@ -512,12 +535,12 @@ function setProgress(p){ document.getElementById("prog").style.width=p+"%"; }
 function render(){
   const app = document.getElementById("app");
   const lessons = phase===1 ? L1 : L2;
-  const quiz = phase===1 ? Q1 : Q2;
+  const quiz = phase===1 ? activeQ1 : activeQ2;
   const scores = phase===1 ? scores1 : scores2;
-  const totalSteps = L1.length + Q1.length + L2.length + Q2.length;
+  const totalSteps = L1.length + QUIZ_SIZE + L2.length + QUIZ_SIZE;
 
   if(mode==="chapter-intro"){
-    setProgress(((L1.length+Q1.length)/totalSteps)*100);
+    setProgress(((L1.length+QUIZ_SIZE)/totalSteps)*100);
     app.innerHTML=`
       <div class="chapter-banner">
         <div style="font-size:36px;margin-bottom:8px;">🎓</div>
@@ -531,7 +554,7 @@ function render(){
 
   if(mode==="lesson"){
     const l = lessons[lIdx];
-    const baseSteps = phase===1 ? 0 : (L1.length+Q1.length);
+    const baseSteps = phase===1 ? 0 : (L1.length+QUIZ_SIZE);
     setProgress(((baseSteps+lIdx)/totalSteps)*100);
 
     let inner="";
@@ -580,7 +603,7 @@ function render(){
 
   if(mode==="quiz"){
     const q = quiz[qIdx];
-    const baseSteps = phase===1 ? L1.length : (L1.length+Q1.length+L2.length);
+    const baseSteps = phase===1 ? L1.length : (L1.length+QUIZ_SIZE+L2.length);
     setProgress(((baseSteps+qIdx)/totalSteps)*100);
     const correct = scores.filter(Boolean).length;
     const optsHtml = q.opts.map((o,i)=>{
@@ -604,13 +627,14 @@ function render(){
     const correct = scores.filter(Boolean).length;
     const total   = quiz.length;
     const pct     = Math.round((correct/total)*100);
-    const emoji   = pct>=85?"🏆":pct>=60?"🎉":"📚";
-    const msg     = pct>=85?"Outstanding — you've mastered this chapter!":pct>=60?"Good work! Review any tricky spots.":"Keep at it — re-read the lessons and try again.";
-    const lessons = phase===1 ? L1 : L2;
-    const rows    = quiz.map((q,i)=>`
+    const perfect  = scores.every(Boolean);
+    const emoji    = perfect?"🏆":pct>=60?"🎉":"📚";
+    const msg      = perfect?"Perfect score! You've mastered this chapter.":pct>=60?"Good work! Review any wrong answers before moving on.":"Keep at it — re-read the lessons and try again.";
+    const chLessons = phase===1 ? L1 : L2;
+    const rows     = quiz.map((q,i)=>`
       <div class="result-row" style="cursor:pointer;" onclick="goToLesson(${i})" title="Review lesson ${i+1}">
         <span style="display:flex;align-items:center;gap:6px;flex:1;margin-right:8px;">
-          <span style="font-size:16px;">${lessons[i]?lessons[i].icon:""}</span>
+          <span style="font-size:16px;">${chLessons[i]?chLessons[i].icon:""}</span>
           <span>${q.q.slice(0,50)}…</span>
         </span>
         <span style="display:flex;align-items:center;gap:6px;">
@@ -618,13 +642,23 @@ function render(){
           <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">${scores[i]?"":"← recap"}</span>
         </span>
       </div>`).join("");
-    const advBtn  = phase===1
-      ? `<button class="btn-nav btn-primary" style="flex:1;" onclick="goAdv()">Continue to advanced lessons →</button>`
-      : `<button class="btn-nav btn-primary" style="flex:1;" onclick="goCh2Quiz()">Retry advanced quiz</button>`;
+
+    const advBtn = phase===1
+      ? (perfect
+          ? `<button class="btn-nav btn-primary" style="flex:1;" onclick="goAdv()">Continue to advanced lessons →</button>`
+          : `<div style="flex:2;background:#FAEEDA;border-radius:var(--radius);padding:10px 12px;font-size:12px;color:#412402;display:flex;align-items:center;gap:8px;">
+               <span style="font-size:16px;">🔒</span>
+               <span><strong>Perfect score required</strong> to unlock advanced lessons. Review the lessons marked ← recap, then retry with new questions.</span>
+             </div>`)
+      : `<button class="btn-nav btn-primary" style="flex:1;" onclick="goCh2Quiz()">Retry with new questions</button>`;
+
     app.innerHTML=`
       <div style="text-align:center;padding:1rem 0 0.5rem;">
         <div style="font-size:32px;margin-bottom:8px;">${emoji}</div>
-        <div class="score-circle"><span class="score-num">${correct}/${total}</span><span class="score-denom">${pct}%</span></div>
+        <div class="score-circle" style="border-color:${perfect?"#1D9E75":"#378ADD"};">
+          <span class="score-num">${correct}/${total}</span>
+          <span class="score-denom">${pct}%</span>
+        </div>
         <p style="font-size:14px;color:var(--text-secondary);margin:0 0 1.5rem;">${msg}</p>
       </div>
       <div class="card">
@@ -632,9 +666,9 @@ function render(){
         <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">Tap any row to go back and review that lesson</p>
         ${rows}
       </div>
-      <div style="display:flex;gap:8px;margin-top:1rem;">
-        <button class="btn-nav" style="flex:1;" onclick="retryQ()">Retry quiz</button>
-        <button class="btn-nav" style="flex:1;" onclick="goToLesson(0)">← All lessons</button>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem;">
+        <button class="btn-nav" style="flex:1;min-width:120px;" onclick="retryQ()">Retry with new questions</button>
+        <button class="btn-nav" style="flex:1;min-width:120px;" onclick="goToLesson(0)">← Review all lessons</button>
         ${advBtn}
       </div>`;
   }
@@ -694,24 +728,25 @@ function nextL(){
 function pick(i){
   if(answered) return;
   sel=i; answered=true;
-  const quiz = phase===1 ? Q1 : Q2;
+  const quiz = phase===1 ? activeQ1 : activeQ2;
   if(phase===1) scores1[qIdx]=(i===quiz[qIdx].ans);
   else          scores2[qIdx]=(i===quiz[qIdx].ans);
   render();
 }
 function nextQ(){
-  const quiz = phase===1 ? Q1 : Q2;
+  const quiz = phase===1 ? activeQ1 : activeQ2;
   if(qIdx<quiz.length-1){ qIdx++; sel=null; answered=false; render(); }
   else { mode="result"; render(); }
 }
 function retryQ(){
-  if(phase===1) scores1=[]; else scores2=[];
+  if(phase===1){ scores1=[]; activeQ1=pickQ(Q1_POOL); }
+  else         { scores2=[]; activeQ2=pickQ(Q2_POOL); }
   qIdx=0; sel=null; answered=false; mode="quiz"; render();
 }
-function goAdv()      { mode="chapter-intro"; render(); }
+function goAdv()       { mode="chapter-intro"; render(); }
 function startChapter2(){ phase=2; mode="lesson"; lIdx=0; sel=null; answered=false; render(); }
-function goCh2Quiz()  { scores2=[]; qIdx=0; sel=null; answered=false; mode="quiz"; render(); }
-function goToLesson(i){ mode="lesson"; lIdx=Math.min(i, (phase===1?L1:L2).length-1); render(); }
+function goCh2Quiz()   { scores2=[]; activeQ2=pickQ(Q2_POOL); qIdx=0; sel=null; answered=false; mode="quiz"; render(); }
+function goToLesson(i) { mode="lesson"; lIdx=Math.min(i, (phase===1?L1:L2).length-1); render(); }
 
 render();
 </script>
